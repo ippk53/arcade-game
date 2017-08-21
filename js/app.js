@@ -1,14 +1,11 @@
 "use strict";
 
-// Enemies our player must avoid
+// Enemy constructor
 var Enemy = function(x, y) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
     this.x = x;
     this.y = y;
     this.speed = Math.floor(Math.random() * 450 + 1);
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+    // The image/sprite for our enemies
     this.sprite = 'images/enemy-bug.png';
 };
 
@@ -20,21 +17,19 @@ Enemy.prototype.update = function(dt) {
     // all computers.s
         this.x += this.speed * dt;
 
-    // This updates the enemies position when the end of the canvas is reached.
+    // Updates the enemies position when the end of the canvas is reached.
     if(this.x > 505) {
         this.x = Math.random() * -850;
     }
 };
 
-// Draw the enemy on the screen, required method for game
+// Draw the enemy on the screen
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-/* * * * * * * * *  Player Section  * * * * * * * * * */
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+//Player Section
+
 var Player = function() {
     this.x = 202;
     this.y = 405;
@@ -56,66 +51,58 @@ Player.prototype.update = function() {
     }
 };
 
-// This function checks to see if player makes contact with the enemies
-// in the Enemy array. Calls the positionReset() function whenever player
-// is within 50px from x-axis and y-axis.
+// Function to check to see if player makes contact with the enemies
 Player.prototype.collisionCheck = function() {
     for (var i = 0; i < allEnemies.length; i++) {
-        if(Math.abs(player.x - allEnemies[i].x) < 30 && Math.abs(player.y - allEnemies[i].y) < 30) {
+        if(Math.abs(this.x - allEnemies[i].x) < 30 && Math.abs(this.y - allEnemies[i].y) < 30) {
             this.positionReset();
         }
     }
 };
 
-// Draw the player on the screen.
+// Draw the player
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     ctx.fillStyle = "black";
     ctx.font = '33px Arial';
-    ctx.fillText("Score: " + this.score, 15, 90);
+    ctx.fillText("Score: " + this.score, 5, 570);
 };
 
-// This function sends player back to starting position.
+// Sends player back to starting position.
 Player.prototype.positionReset = function() {
     this.x = 202;
     this.y = 405;
 };
 
-// Keeps player inside the canvas; Player does not leave the canvas. The function also moves player using the arrows.
-Player.prototype.handleInput = function(keyInput) {
-    switch(keyInput) {
-        case 'up':
-            if(this.y < 10) {
-                return null;
-            }
-            else {
-                this.y -= 83;
-            }
-            break;
-        case 'down':
-            if(this.y > 400) {
-                return null;
-            }
-            else {
-                this.y += 83;
-            }
-            break;
-        case 'left':
-            if(this.x < 100) {
-                return null;
-            }
-            else {
-                this.x -= 101;
-            }
-            break;
-        case 'right':
-            if(this.x > 400) {
-                return null;
-            }
+//Setting width and height for the gameboard tiles
+var TILE_WIDTH = 101;
+var TILE_HEIGHT = 83;
 
+//For each keystroke, the player shall move along the x and y axis
+//Set variable to less than 100 for up and down to keep player inside game tile
+Player.prototype.handleInput = function (keyInput) {
+    switch (keyInput) {
+        case "up":
+            if (this.y > 0) {
+                this.y -= TILE_HEIGHT;
+            }
+            break;
 
-            else {
-                this.x += 101;
+        case "down":
+            if (this.y < 400) {
+                this.y = this.y + TILE_HEIGHT;
+            }
+            break;
+
+        case "left":
+            if (this.x > 0) {
+                this.x = this.x - TILE_WIDTH;
+            }
+            break;
+
+        case "right":
+            if (this.x < 400) {
+                this.x += TILE_WIDTH;
             }
             break;
     }
@@ -131,8 +118,8 @@ var enemy2 = new Enemy(-350, 145);
 var enemy3 = new Enemy(-96, 228);
 var enemy4 = new Enemy(-96, 63);
 var enemy5 = new Enemy(-150, 145);
-var enemy6 = new Enemy(-450, 228);
-var allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6];
+
+var allEnemies = [enemy1, enemy2, enemy3, enemy4, enemy5];
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
